@@ -6,7 +6,7 @@ use MIME::Types;
 use URI::Escape;
 use File::Spec::Functions qw(canonpath);
 require Exporter;
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 our @ISA = qw(Exporter);
 our @EXPORT = qw(serve_static);
 
@@ -23,7 +23,8 @@ sub serve_static {
     if (-e $path and open FILE, $path) {
 	local $/;
 	my $content=<FILE>;
-        my $mimeobj= $mime->mimeTypeOf($base);
+	close FILE;
+        my $mimeobj= $mime->mimeTypeOf($path);
         my $mime = ($mimeobj ? $mimeobj->type :
     			$magic->checktype_contents($content));
         print "HTTP/1.1 200 OK\n"; 
@@ -43,8 +44,13 @@ HTTP::Server::Simple::Static - Serve static files with HTTP::Server::Simple
 
 =head1 SYNOPSIS
 
-  my %upload = $r->upload('file');
-  return unless $upload{mimetype} =~ m|^image/|;
+    use base 'HTTP::Server::Simple';
+    use HTTP::Server::Simple::Static;
+
+    sub handle_request {
+	my ($self,$cgi) = @_;
+	return $self->serve_static($cgi,$webroot);
+    }
 
 =head1 DESCRIPTION
 

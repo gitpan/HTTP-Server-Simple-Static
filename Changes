@@ -1,4 +1,8 @@
 Revision history for Perl extension HTTP:Server::Simple::Static
 
+0.02  Wed Mar 29 12:00:00 2005
+	- close fh after reading content. (Max Maischein)
+	- fixed content-type header (Kang-min Liu & Max)
+	
 0.01  Thu Jan 06 21:40:02 2005
 	- forked from patch to HTTP::Server::Simple

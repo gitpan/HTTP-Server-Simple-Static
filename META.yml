@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name: HTTP-Server-Simple-Static
-version: 0.01
+version: 0.02
 author:
   - |-
     Marcus Ramberg C<marcus@thefeed.no>
@@ -17,5 +17,5 @@ requires:
 provides:
   HTTP::Server::Simple::Static:
     file: lib/HTTP/Server/Simple/Static.pm
-    version: 0.01
-generated_by: Module::Build version 0.25
+    version: 0.02
+generated_by: Module::Build version 0.2607
