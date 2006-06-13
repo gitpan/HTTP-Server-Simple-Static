@@ -1,10 +1,11 @@
---- #YAML:1.0
+---
 name: HTTP-Server-Simple-Static
-version: 0.02
+version: 0.03
 author:
+  - Stephen Quinney C<sjq-perl@jadevine.org.uk>
   - |-
-    Marcus Ramberg C<marcus@thefeed.no>
-    Thanks to Simon Cozens for initial implementation.
+    Thanks to Marcus Ramberg C<marcus@thefeed.no> and Simon Cozens for
+    initial implementation.
 abstract: Serve static files with HTTP::Server::Simple
 license: perl
 requires:
@@ -17,5 +18,5 @@ requires:
 provides:
   HTTP::Server::Simple::Static:
     file: lib/HTTP/Server/Simple/Static.pm
-    version: 0.02
-generated_by: Module::Build version 0.2607
+    version: 0.03
+generated_by: Module::Build version 0.2612

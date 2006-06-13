@@ -3,8 +3,13 @@ NAME
     HTTP::Server::Simple
 
 SYNOPSIS
-      my %upload = $r->upload('file');
-      return unless $upload{mimetype} =~ m|^image/|;
+    use base 'HTTP::Server::Simple::CGI';
+    use HTTP::Server::Simple::Static;
+
+    sub handle_request {
+        my ($self,$cgi) = @_;
+        return $self->serve_static($cgi,$webroot);
+    }
 
 DESCRIPTION
     this mixin adds a method to serve static files from your
@@ -15,10 +20,15 @@ METHODS
         Takes a base directory and a web path, and tries to serve a static
         file.
 
+BUGS
+    Bugs or wishlist requests should be submitted via http://rt.cpan.org/
+
 SEE ALSO
 AUTHOR
-    Marcus Ramberg "marcus@thefeed.no" Thanks to Simon Cozens for initial
-    implementation.
+    Stephen Quinney <sjq-perl@jadevine.org.uk>.
+
+    Thanks to Marcus Ramberg "marcus@thefeed.no" and Simon Cozens for
+    initial implementation.
 
 LICENSE
     You may distribute this code under the same terms as Perl itself.
