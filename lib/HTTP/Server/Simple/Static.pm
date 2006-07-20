@@ -10,7 +10,7 @@ use File::Spec::Functions qw(canonpath);
 
 require Exporter;
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 our @ISA     = qw(Exporter);
 our @EXPORT  = qw(serve_static);
 
@@ -38,9 +38,10 @@ sub serve_static {
         my $mime    = ($mimeobj ? $mimeobj->type :
                        $magic->checktype_contents($content));
 
-        print "HTTP/1.1 200 OK\n";
-        print "Content-type: " . $mime . "\n";
-        print "Content-length: " . length($content) . "\n\n";
+        use bytes;      # Content-Length in bytes, not characters
+        print "HTTP/1.1 200 OK\015\012";
+        print "Content-type: " . $mime . "\015\012";
+        print "Content-length: " . length($content) . "\015\012\015\012";
         print $content;
         return 1;
     }

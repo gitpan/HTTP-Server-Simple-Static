@@ -2,17 +2,17 @@
 use ExtUtils::MakeMaker;
 WriteMakefile
 (
-          'PL_FILES' => {},
-          'INSTALLDIRS' => 'site',
           'NAME' => 'HTTP::Server::Simple::Static',
           'VERSION_FROM' => 'lib/HTTP/Server/Simple/Static.pm',
           'PREREQ_PM' => {
+                           'Exporter' => '0',
+                           'File::MMagic' => '0',
+                           'File::Spec::Functions' => '0',
                            'HTTP::Server::Simple' => '0.01',
-                           'URI::Escape' => 0,
-                           'MIME::Types' => 0,
-                           'File::Spec::Functions' => 0,
-                           'File::MMagic' => 0,
-                           'Exporter' => 0
-                         }
+                           'MIME::Types' => '0',
+                           'URI::Escape' => '0'
+                         },
+          'INSTALLDIRS' => 'site',
+          'PL_FILES' => {}
         )
 ;

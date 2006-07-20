@@ -1,8 +1,8 @@
 ---
 name: HTTP-Server-Simple-Static
-version: 0.03
+version: 0.04
 author:
-  - Stephen Quinney C<sjq-perl@jadevine.org.uk>
+  - 'Stephen Quinney C<sjq-perl@jadevine.org.uk>'
   - |-
     Thanks to Marcus Ramberg C<marcus@thefeed.no> and Simon Cozens for
     initial implementation.
@@ -18,5 +18,5 @@ requires:
 provides:
   HTTP::Server::Simple::Static:
     file: lib/HTTP/Server/Simple/Static.pm
-    version: 0.03
-generated_by: Module::Build version 0.2612
+    version: 0.04
+generated_by: Module::Build version 0.26
