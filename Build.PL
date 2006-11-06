@@ -8,6 +8,7 @@ Module::Build->new
       create_makefile_pl => 'traditional',
       requires    => { 'HTTP::Server::Simple' => 0.01 ,
 		       'File::Spec::Functions' => 0,
+                       'IO::File' => 0,
 		       'URI::Escape' => 0,
 		       'MIME::Types' => 0,
 		       'File::MMagic'  => 0,

@@ -10,7 +10,7 @@ use File::Spec::Functions qw(canonpath);
 
 require Exporter;
 
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 our @ISA     = qw(Exporter);
 our @EXPORT  = qw(serve_static);
 
@@ -26,7 +26,9 @@ sub serve_static {
 
     my $fh = IO::File->new();
     if ( -e $path and $fh->open($path) ) {
-        $fh->binmode;
+        binmode $fh;
+        binmode $self->stdout_handle;
+
         my $content;
         {
             local $/;
