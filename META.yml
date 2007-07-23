@@ -1,6 +1,6 @@
 ---
 name: HTTP-Server-Simple-Static
-version: 0.05
+version: 0.06
 author:
   - 'Stephen Quinney C<sjq-perl@jadevine.org.uk>'
   - |-
@@ -21,7 +21,7 @@ requires:
 provides:
   HTTP::Server::Simple::Static:
     file: lib/HTTP/Server/Simple/Static.pm
-    version: 0.05
+    version: 0.06
 generated_by: Module::Build version 0.2805
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.2.html

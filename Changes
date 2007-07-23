@@ -1,5 +1,11 @@
 Revision history for Perl extension HTTP:Server::Simple::Static
 
+0.06  Mon, 23 Jul 2007 10:42:37 +0100
+
+        - Fixed problem with handling empty files where they have no
+          file extension or it is not recognised by MIME::Types.
+          Thanks to Mark Stosberg for the report
+
 0.05  Mon,  6 Nov 2006 09:29:42 +0000
 
         - Applied patch from Max Maischein to use the binmode function
