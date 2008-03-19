@@ -1,5 +1,13 @@
 Revision history for Perl extension HTTP:Server::Simple::Static
 
+0.07  Wed, 19 Mar 2008 18:41:56 +0000
+
+        - Only serve files not directories, thanks to Bradley Bailey
+          for the report.
+          Closes http://rt.cpan.org/Public/Bug/Display.html?id=34068
+        - Fixed url handling for requests from IE/
+          Closes http://rt.cpan.org/Public/Bug/Display.html?id=27650
+          
 0.06  Mon, 23 Jul 2007 10:42:37 +0100
 
         - Fixed problem with handling empty files where they have no

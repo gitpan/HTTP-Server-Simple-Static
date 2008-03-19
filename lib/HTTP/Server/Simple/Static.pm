@@ -11,7 +11,7 @@ use File::Spec::Functions qw(canonpath);
 use base qw(Exporter);
 our @EXPORT = qw(serve_static);
 
-our $VERSION = '0.06';
+our $VERSION = '0.07';
 
 my $mime  = MIME::Types->new();
 my $magic = File::MMagic->new();
@@ -20,11 +20,16 @@ sub serve_static {
     my ( $self, $cgi, $base ) = @_;
     my $path = $cgi->url( -absolute => 1, -path_info => 1 );
 
+    # Internet Explorer provides the full URI in the GET section
+    # of the request header, so remove the protocol, domain name,
+    # and port if they exist.
+    $path =~ s{^https?://([^/:]+)(:\d+)?/}{/};
+
     # Sanitize the path and try it.
     $path = $base . canonpath( URI::Escape::uri_unescape($path) );
 
     my $fh = IO::File->new();
-    if ( -e $path and $fh->open($path) ) {
+    if ( -f $path && $fh->open($path) ) {
         binmode $fh;
         binmode $self->stdout_handle;
 
@@ -83,6 +88,10 @@ __END__
 
 HTTP::Server::Simple::Static - Serve static files with HTTP::Server::Simple
 
+=head1 VERSION
+
+This documentation refers to HTTP::Server::Simple::Static version 0.07
+
 =head1 SYNOPSIS
 
     package MyServer;
@@ -132,7 +141,7 @@ initial implementation.
 
 =head1 LICENSE AND COPYRIGHT
 
-Copyright 2006, 2007. Stephen Quinney C<sjq-perl@jadevine.org.uk>
+Copyright 2006 - 2008. Stephen Quinney C<sjq-perl@jadevine.org.uk>
 
 You may distribute this code under the same terms as Perl itself.
 
