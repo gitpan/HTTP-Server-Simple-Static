@@ -2,19 +2,20 @@ package HTTP::Server::Simple::Static;
 use strict;
 use warnings;
 
-use File::MMagic ();
-use MIME::Types  ();
-use URI::Escape  ();
-use IO::File     ();
+use File::LibMagic ();
 use File::Spec::Functions qw(canonpath);
+use HTTP::Date ();
+use IO::File     ();
+use URI::Escape  ();
 
 use base qw(Exporter);
 our @EXPORT = qw(serve_static);
 
-our $VERSION = '0.07';
+our $VERSION = '0.08';
 
-my $mime  = MIME::Types->new();
-my $magic = File::MMagic->new();
+my $line_end = "\015\012";
+
+my $magic = File::LibMagic->new();
 
 sub serve_static {
     my ( $self, $cgi, $base ) = @_;
@@ -50,32 +51,36 @@ sub serve_static {
             $content        = q{};
         }
 
-        # If a file has no extension, e.g. 'foo' this will return undef
-        my $mimeobj = $mime->mimeTypeOf($path);
+        my $mimetype = $magic->checktype_filename($path);
 
-        my $mimetype;
-        if ( defined $mimeobj ) {
-            $mimetype = $mimeobj->type;
-        }
-        else {
+        # RFC-2616 Section 14.29 "Last-Modified":
+        #
+        # An origin server MUST NOT send a Last-Modified date which is
+        # later than the server's time of message origination. In such
+        # cases, where the resource's last modification would indicate
+        # some time in the future, the server MUST replace that date
+        # with the message origination date.
 
-            # If the file is empty File::MMagic will give the MIME type as
-            # application/octet-stream' which is not helpful and not the
-            # way other web servers act. So, we default to 'text/plain'
-            # which is the same as apache.
-
-            if ($content_length) {
-                $mimetype = $magic->checktype_contents($content);
-            }
-            else {
-                $mimetype = 'text/plain';
-            }
+        my $mtime = ( stat $path )[9];
+        my $now = time;
+        if ( $mtime > $now ) {
+            $mtime = $now;
         }
 
-        print "HTTP/1.1 200 OK\015\012";
-        print 'Content-type: ' . $mimetype . "\015\012";
-        print 'Content-length: ' . $content_length . "\015\012\015\012";
-        print $content;
+        my $last_modified = HTTP::Date::time2str($mtime);
+        my $date = HTTP::Date::time2str($now);
+
+        print 'HTTP/1.1 200 OK' . $line_end;
+        print 'Date: ' . $date . $line_end;
+        print 'Last-Modified: ' . $last_modified . $line_end;
+        print 'Content-type: ' . $mimetype . $line_end;
+        print 'Content-length: ' . $content_length . $line_end;
+        print $line_end;
+
+	if ( $cgi->request_method() ne 'HEAD' ) {
+	    print $content;
+	}
+
         return 1;
     }
     return 0;
@@ -99,10 +104,19 @@ This documentation refers to HTTP::Server::Simple::Static version 0.07
     use base qw(HTTP::Server::Simple::CGI);
     use HTTP::Server::Simple::Static;
 
+    my $webroot = '/var/www';
+
     sub handle_request {
 	my ( $self, $cgi ) = @_;
-	return $self->serve_static( $cgi, $webroot );
-    }
+
+        if ( !$self->serve_static( $cgi, $webroot ) ) {
+            print "HTTP/1.0 404 Not found\r\n";
+            print $cgi->header, 
+                  $cgi->start_html('Not found'),
+                  $cgi->h1('Not found'),
+                  $cgi->end_html;
+        }
+    } 
 
     package main;
 
@@ -119,10 +133,11 @@ subclass.
 
 =over 4
 
-=item  serve_static
+=item  serve_static( $cgi, $base )
 
-Takes a base directory and a web path, and tries to serve a static
-file. Returns 0 if the file does not exist, returns 1 on success.
+Takes a reference to the CGI object and a document root path, and
+tries to serve a static file. Returns 0 if the file does not exist,
+returns 1 on success.
 
 =back
 
@@ -130,7 +145,16 @@ file. Returns 0 if the file does not exist, returns 1 on success.
 
 Bugs or wishlist requests should be submitted via http://rt.cpan.org/
 
+=head1 DEPENDENCIES
+
+The L<File::LibMagic> module is used to detect the MIME-type of
+a file. The L<URI::Escape> module is used for URI handling. The
+L<HTTP::Date> module is used to format the timestamp in the
+Last-Modified HTTP header.
+
 =head1 SEE ALSO
+
+L<HTTP::Server::Simple>, L<HTTP::Server::Simple::CGI>
 
 =head1 AUTHOR
 
@@ -141,7 +165,7 @@ initial implementation.
 
 =head1 LICENSE AND COPYRIGHT
 
-Copyright 2006 - 2008. Stephen Quinney C<sjq-perl@jadevine.org.uk>
+Copyright 2006 - 2013. Stephen Quinney C<sjq-perl@jadevine.org.uk>
 
 You may distribute this code under the same terms as Perl itself.
 
