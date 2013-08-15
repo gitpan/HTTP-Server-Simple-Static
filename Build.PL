@@ -9,7 +9,8 @@ Module::Build->new
       dist_author => 'Stephen Quinney <sjq-perl@jadevine.org.uk>',
       license     => 'perl',
       create_makefile_pl => 'traditional',
-      requires    => { 
+      requires    => {
+	  'CGI'                   => '3.46',
           'Exporter'              => 0,
           'File::LibMagic'        => 0,
           'File::Spec::Functions' => 0,

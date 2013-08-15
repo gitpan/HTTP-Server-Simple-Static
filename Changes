@@ -1,5 +1,11 @@
 Revision history for Perl extension HTTP:Server::Simple::Static
 
+0.09  Thu, 15 Aug 2013 09:08:00 +0100
+
+        - Added support for clients which send an If-Modified-Since
+            HTTP header in the request. We return a 304 if the file
+            has not been changed.
+
 0.08  Wed, 14 Aug 2013 17:00:00 +0100
 
         - Replaced File::MMagic and MIME::Types with File::LibMagic

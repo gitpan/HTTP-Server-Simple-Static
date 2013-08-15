@@ -11,7 +11,7 @@ use URI::Escape  ();
 use base qw(Exporter);
 our @EXPORT = qw(serve_static);
 
-our $VERSION = '0.08';
+our $VERSION = '0.09';
 
 my $line_end = "\015\012";
 
@@ -31,6 +31,28 @@ sub serve_static {
 
     my $fh = IO::File->new();
     if ( -f $path && $fh->open($path) ) {
+        my $mtime = ( stat $path )[9];
+        my $now = time;
+
+        # RFC-2616 Section 14.25 "If-Modified-Since":
+
+	my $if_modified_since = $cgi->http('If-Modified-Since');
+	if ($if_modified_since) {
+	    $if_modified_since = HTTP::Date::str2time($if_modified_since);
+
+	    if ( defined $if_modified_since &&     # parsed ok
+		 $if_modified_since <= $now &&     # not in future
+		 $mtime <= $if_modified_since ) {  # not changed
+
+		print 'HTTP/1.1 304 Not Modified' . $line_end;
+		print $line_end;
+
+		return 1;
+	    }
+	}
+
+	# Read the file contents and get the length in bytes
+
         binmode $fh;
         binmode $self->stdout_handle;
 
@@ -51,6 +73,8 @@ sub serve_static {
             $content        = q{};
         }
 
+	# Find MIME type
+
         my $mimetype = $magic->checktype_filename($path);
 
         # RFC-2616 Section 14.29 "Last-Modified":
@@ -61,8 +85,6 @@ sub serve_static {
         # some time in the future, the server MUST replace that date
         # with the message origination date.
 
-        my $mtime = ( stat $path )[9];
-        my $now = time;
         if ( $mtime > $now ) {
             $mtime = $now;
         }
@@ -133,11 +155,20 @@ subclass.
 
 =over 4
 
-=item  serve_static( $cgi, $base )
+=item serve_static( $cgi, $base )
 
 Takes a reference to the CGI object and a document root path, and
 tries to serve a static file. Returns 0 if the file does not exist,
 returns 1 on success.
+
+This method sets the C<Date> and C<Last-Modified> HTTP headers when
+sending a response for a valid file. Further to this, the method
+supports clients which send an C<If-Modified-Since> HTTP header in the
+request, it will return a 304 C<Not Modified> response if the file is
+unchanged. See RFC-2616 for full details.
+
+If the client makes a C<HEAD> request then no message body will be
+returned in the response.
 
 =back
 

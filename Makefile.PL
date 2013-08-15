@@ -5,6 +5,7 @@ WriteMakefile
   'NAME' => 'HTTP::Server::Simple::Static',
   'VERSION_FROM' => 'lib/HTTP/Server/Simple/Static.pm',
   'PREREQ_PM' => {
+                   'CGI' => '3.46',
                    'Exporter' => 0,
                    'File::LibMagic' => 0,
                    'File::Spec::Functions' => 0,

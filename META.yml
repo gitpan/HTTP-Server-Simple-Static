@@ -15,8 +15,9 @@ name: HTTP-Server-Simple-Static
 provides:
   HTTP::Server::Simple::Static:
     file: lib/HTTP/Server/Simple/Static.pm
-    version: 0.08
+    version: 0.09
 requires:
+  CGI: 3.46
   Exporter: 0
   File::LibMagic: 0
   File::Spec::Functions: 0
@@ -26,4 +27,4 @@ requires:
   URI::Escape: 0
 resources:
   license: http://dev.perl.org/licenses/
-version: 0.08
+version: 0.09
